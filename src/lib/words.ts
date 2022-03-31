@@ -5,10 +5,23 @@ import { getGuessStatuses } from './statuses'
 import { default as GraphemeSplitter } from 'grapheme-splitter'
 
 export const isWordInWordList = (word: string) => {
-  return (
-    WORDS.includes(localeAwareLowerCase(word)) ||
-    VALID_GUESSES.includes(localeAwareLowerCase(word))
-  )
+  const lowercaseword = localeAwareLowerCase(word)
+  
+  // if the word is in the larger list of valid guesses
+  // this sees if 1. if the word is in the long string of words and 2. if it starts at a multiple of 4,
+  // indicating that it is the start of a word, rather than two words overlapping
+  const isPresentValidGuesses:boolean = VALID_GUESSES[lowercaseword[0].charCodeAt(0) - 'a'.charCodeAt(0)].includes(lowercaseword.substring(1))
+                  && VALID_GUESSES[lowercaseword[0].charCodeAt(0) - 'a'.charCodeAt(0)].indexOf(lowercaseword.substring(1)) % 4 === 0
+  
+  // if the word is in the shorter WORDS Array
+  const isPresentWordsList:boolean = WORDS.includes(lowercaseword)
+  
+  // if the word is present in either of the lists, then the guess is valid
+  if(isPresentWordsList || isPresentValidGuesses) {
+    return true
+  }
+
+  return false
 }
 
 export const isWinningWord = (word: string) => {
